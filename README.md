@@ -5,20 +5,20 @@ Claude Code (and Cursor, Codex, OpenCode, etc.) with one command.
 
 ## Install
 
-> GitHub path: `fngage00789/gable-skills`
+> GitHub path: `fngage00789/gable-dotnetfix-skills`
 
 ```bash
 # install everything in this repo
-npx skills add fngage00789/gable-skills
+npx skills add fngage00789/gable-dotnetfix-skills
 
 # or pick specific skills
-npx skills add fngage00789/gable-skills --skill excel-issue-fixer
+npx skills add fngage00789/gable-dotnetfix-skills --skill excel-issue-fixer
 
 # list what's available without installing
-npx skills add fngage00789/gable-skills --list
+npx skills add fngage00789/gable-dotnetfix-skills --list
 
 # target a specific agent (default: auto-detect installed agents)
-npx skills add fngage00789/gable-skills -a claude-code
+npx skills add fngage00789/gable-dotnetfix-skills -a claude-code
 ```
 
 The CLI fetches each `SKILL.md` from GitHub and installs it into your agent's skills directory
