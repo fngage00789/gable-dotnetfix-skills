@@ -37,6 +37,7 @@ npx skills find       # search
 | Skill | What it does |
 |-------|--------------|
 | [`excel-issue-fixer`](skills/excel-issue-fixer/) | Read an Excel UAT/issue sheet, classify FE/BE/fullstack, auto-detect the stack, and generate the **3-pillar** output (All-Tasks board + a Before/After execution plan per detected stack), then implement and keep all three in sync. |
+| [`dotnet-developer`](skills/dotnet-developer/) | Senior .NET developer — defaults to .NET 8, writes compilable code, and always follows a fix with tests. Routes across C#, ASP.NET Core, EF Core, Azure, Clean Architecture/CQRS, Blazor, DevOps, testing, security, and observability via on-demand reference docs. |
 
 ## Repo layout
 
