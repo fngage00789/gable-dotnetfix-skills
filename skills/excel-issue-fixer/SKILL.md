@@ -2,13 +2,13 @@
 name: excel-issue-fixer
 description: >
   Read Excel issue list, classify backend (.NET/ASP.NET Core) vs frontend (Angular),
-  write implementation plan, then implement. Combines dotnet-developer + angular-developer + playwright-angular-qa.
+  write implementation plan, then implement. Combines dotnet-developer + angular-developer.
   Trigger: "read excel", "fix issues from excel", "excel bug list", "issue sheet", ".xlsx", "import issues".
 ---
 
 # Excel Issue Fixer
 
-Combines: `dotnet-developer` (backend) + `angular-developer` (frontend impl) + `playwright-angular-qa` (e2e tests).
+Combines: `dotnet-developer` (backend) + `angular-developer` (frontend impl).
 
 ## flow (strict order — never skip)
 
@@ -101,7 +101,7 @@ Then use TodoWrite. One todo per issue.
 - HTTPClient + interceptors for API calls
 - Angular Aria patterns for accessible components (Accordion, Listbox, Menu, etc.)
 - Tailwind CSS for styling if project uses it
-- After impl → Playwright e2e tests via `playwright-angular-qa`
+- After impl → Angular unit/spec tests via `ng test`
 
 ### fullstack issues
 - backend first → frontend second → integration tests last
@@ -118,7 +118,7 @@ Then use TodoWrite. One todo per issue.
 ```
 backend  → tests/Unit/{Feature}Tests.cs
            tests/Integration/{Feature}ApiTests.cs
-frontend → tests/Playwright/{Feature}PlaywrightTests.cs
+frontend → src/app/**/{feature}.spec.ts   # Angular ng test (Karma/Jasmine or Jest)
 ```
 
 ## scaffold check (run once if missing)
@@ -128,9 +128,8 @@ frontend → tests/Playwright/{Feature}PlaywrightTests.cs
 dotnet add package xunit Moq FluentAssertions
 dotnet add package Microsoft.AspNetCore.Mvc.Testing Testcontainers.PostgreSql
 
-# frontend / e2e
-npm install -D @playwright/test
-npx playwright install
+# frontend tests — Angular CLI ships its own test runner
+ng test --watch=false
 
 # excel parsing
 pip install pandas openpyxl
