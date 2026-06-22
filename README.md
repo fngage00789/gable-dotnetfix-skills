@@ -49,8 +49,36 @@ npx skills find       # search
 
 | Skill | What it does |
 |-------|--------------|
-| [`excel-issue-fixer`](skills/excel-issue-fixer/) | Read an Excel UAT/issue sheet, classify FE/BE/fullstack, auto-detect the stack, and generate the **3-pillar** output (All-Tasks board + a Before/After execution plan per detected stack), then implement and keep all three in sync. |
+| [`excel-issue-fixer`](skills/excel-issue-fixer/) | Read an Excel UAT/issue sheet, classify FE/BE/fullstack, auto-detect the stack, and generate the **3-pillar** output (All-Tasks board + a Before/After execution plan per detected stack), then implement and keep all three in sync. **Composes other skills — see [Skill dependencies](#skill-dependencies).** |
 | [`dotnet-developer`](skills/dotnet-developer/) | Senior .NET developer — defaults to .NET 8, writes compilable code, and always follows a fix with tests. Routes across C#, ASP.NET Core, EF Core, Azure, Clean Architecture/CQRS, Blazor, DevOps, testing, security, and observability via on-demand reference docs. |
+
+## Skill dependencies
+
+Some skills **orchestrate other skills** and need their companions installed first — installing
+the orchestrator alone is not enough.
+
+| Skill | Requires (install first) | Why |
+|-------|--------------------------|-----|
+| `excel-issue-fixer` | `dotnet-developer`, `angular-developer`, `playwright-angular-qa` | Delegates backend impl to `dotnet-developer`, frontend impl to `angular-developer`, and e2e tests to `playwright-angular-qa`. |
+| `dotnet-developer` | — | Standalone. |
+
+So **before running `/excel-issue-fixer`, install its companions:**
+
+```bash
+# backend impl — this repo
+npx skills add fngage00789/gable-dotnetfix-skills --skill dotnet-developer
+
+# frontend impl — angular/skills repo
+npx skills add angular/skills --skill angular-developer
+
+# e2e tests — install from the repo that publishes it
+npx skills add <owner/repo> --skill playwright-angular-qa
+```
+
+> `angular-developer` is the one listed at
+> <https://claudemarketplaces.com/skills/angular/skills/angular-developer> — it is **not** in this
+> repo, so it must be added separately. Replace `<owner/repo>` with the source for
+> `playwright-angular-qa`.
 
 ## Repo layout
 
