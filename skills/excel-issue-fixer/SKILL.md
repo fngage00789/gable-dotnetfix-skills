@@ -10,20 +10,63 @@ description: >
 
 Combines: `dotnet-developer` (backend) + `angular-developer` (frontend impl).
 
+## invocation
+
+```
+/excel-issue-fixer @<path-to-file.xlsx>
+```
+
+The `@<file>` is the Excel issue sheet. If no path is given, ask for one before doing anything else.
+
 ## flow (strict order — never skip)
 
 ```
-1. PARSE    → read Excel, extract all rows
-2. CLASSIFY → each issue: backend | frontend | fullstack
-3. DETECT   → auto-detect FE + BE stack from the repo (see ## stack auto-detect)
-4. PLAN     → write the 3 pillar files (All-Tasks → FE plan → BE plan), then TodoWrite
-5. CONFIRM  → show plan, wait for approval (or auto if told)
-6. IMPLEMENT→ execute plan, backend first → frontend → tests
-7. VERIFY   → run tests, confirm no regression; sync status across all 3 pillars
+1. PARSE    → read the @<file> Excel, extract all rows
+2. SELECT   → ASK the user to pick the frontend + backend projects (see ## select codebases)
+3. CLASSIFY → each issue: backend | frontend | fullstack
+4. DETECT   → auto-detect FE + BE stack inside the selected paths (see ## stack auto-detect)
+5. PLAN     → write the 3 pillar files (All-Tasks → FE plan → BE plan), then TodoWrite
+6. SUGGEST  → show the Before/After fix per issue, WAIT for approval (see ## suggest before/after)
+7. IMPLEMENT→ execute approved plan, backend first → frontend → tests
+8. VERIFY   → run tests, confirm no regression; sync status across all 3 pillars
 ```
 
 The PLAN output is the **3-pillar set** — see `references/three-pillar-output.md` for the full
 templates and the Before/After contract.
+
+## select codebases (after parse — mandatory)
+
+Before classifying, **prompt the user to choose the two project roots** — never assume the cwd.
+Use the `AskUserQuestion` tool (it renders as a selectable popup); one question per role:
+
+- **Frontend project** — the Angular (or React/Vue) repo/folder. Offer detected candidates as
+  options (dirs containing `package.json` + `angular.json`), plus "None / backend-only".
+- **Backend project** — the .NET repo/folder. Offer detected candidates (dirs containing
+  `*.csproj` / `*.sln` / `global.json`), plus "None / frontend-only".
+
+Discover candidates first so the popup has real choices:
+
+```bash
+# frontend candidates
+find . -maxdepth 4 -name angular.json -not -path '*/node_modules/*' -printf '%h\n' 2>/dev/null
+# backend candidates
+find . -maxdepth 4 \( -name '*.sln' -o -name '*.csproj' \) -not -path '*/bin/*' -printf '%h\n' 2>/dev/null | sort -u
+```
+
+Record the picks as `FERoot` and `BERoot`. All later steps (DETECT, plan filenames, Before/After
+file reads, IMPLEMENT) operate **inside those roots**. If the user picks "None" for a role, skip
+that role's plan pillar entirely.
+
+## suggest before/after (gate before any code)
+
+After PLAN, **present the Before/After suggestion for each issue and wait for explicit approval** —
+do not edit files until the user approves (unless they said "auto" / "just fix it").
+
+- Show, per issue: `id · title`, the **Before** block (real code read from `FERoot`/`BERoot`,
+  verbatim with `file:line`) and the proposed **After** block (`// ← FIXED`).
+- Group by codebase (Backend first, then Frontend). Keep it skimmable — diff-style.
+- Let the user approve all, approve a subset, or request changes. Only approved issues get
+  implemented; re-show after edits.
 
 ## parse rules
 
@@ -50,7 +93,8 @@ Output per row:
 
 ## stack auto-detect (run before writing the plans)
 
-Inspect the repo — never hardcode versions. Fill the "Codebases"/"Stack:" headers from what you find.
+Inspect the selected `FERoot` / `BERoot` — never hardcode versions. Fill the "Codebases"/"Stack:"
+headers from what you find.
 
 | Probe | Reads | Yields |
 |---|---|---|
@@ -75,7 +119,7 @@ Pillar 3  Backend plan  → UAT-<BEStack>-Plan-<Module>.md  Before/After per BE 
 
 - Split by **coverage, not doc-type**: one all-tasks file + one plan per stack.
 - A **fullstack** issue → once in All-Tasks, and in **both** plans (each shows only its layer's half).
-- **Before/After contract:** the Before block is the **real code read from the working tree** (verbatim,
+- **Before/After contract:** the Before block is the **real code read from `FERoot`/`BERoot`** (verbatim,
   `Grep`/`Read` it first); After is the minimal edit with `// ← FIXED` / `// ← BUG:` markers; cite `file:line`;
   mark `*(approximate)*` only when the exact line can't be found — never silently guess.
 - Each plan issue carries 3 checkboxes: Fix implemented · Unit/integration test written · UAT retest passed.
