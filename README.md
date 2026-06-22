@@ -59,7 +59,7 @@ the orchestrator alone is not enough.
 
 | Skill | Requires (install first) | Why |
 |-------|--------------------------|-----|
-| `excel-issue-fixer` | `dotnet-developer`, `angular-developer`, `playwright-angular-qa` | Delegates backend impl to `dotnet-developer`, frontend impl to `angular-developer`, and e2e tests to `playwright-angular-qa`. |
+| `excel-issue-fixer` | `dotnet-developer`, `angular-developer` | Delegates backend impl to `dotnet-developer` and frontend impl to `angular-developer`. |
 | `dotnet-developer` | — | Standalone. |
 
 So **before running `/excel-issue-fixer`, install its companions:**
@@ -70,15 +70,11 @@ npx skills add fngage00789/gable-dotnetfix-skills --skill dotnet-developer
 
 # frontend impl — angular/skills repo
 npx skills add angular/skills --skill angular-developer
-
-# e2e tests — install from the repo that publishes it
-npx skills add <owner/repo> --skill playwright-angular-qa
 ```
 
 > `angular-developer` is the one listed at
 > <https://claudemarketplaces.com/skills/angular/skills/angular-developer> — it is **not** in this
-> repo, so it must be added separately. Replace `<owner/repo>` with the source for
-> `playwright-angular-qa`.
+> repo, so it must be added separately.
 
 ## Repo layout
 
