@@ -26,7 +26,8 @@ The `@<file>` is the Excel issue sheet. If no path is given, ask for one before 
 3. CLASSIFY → each issue: backend | frontend | fullstack
 4. DETECT   → auto-detect FE + BE stack inside the selected paths (see ## stack auto-detect)
 5. PLAN     → write the 3 pillar files (All-Tasks → FE plan → BE plan), then TodoWrite
-6. SUGGEST  → show the Before/After fix per issue, WAIT for approval (see ## suggest before/after)
+6. SUGGEST  → show Before/After per issue, then POPUP-ASK the user to choose: Review/Approve or
+              Auto-fix all — never edit a file before this popup returns (see ## suggest before/after)
 7. IMPLEMENT→ execute approved plan, backend first → frontend → tests
 8. VERIFY   → run tests, confirm no regression; sync status across all 3 pillars
 ```
@@ -57,16 +58,25 @@ Record the picks as `FERoot` and `BERoot`. All later steps (DETECT, plan filenam
 file reads, IMPLEMENT) operate **inside those roots**. If the user picks "None" for a role, skip
 that role's plan pillar entirely.
 
-## suggest before/after (gate before any code)
+## suggest before/after (HARD gate — popup before any code)
 
-After PLAN, **present the Before/After suggestion for each issue and wait for explicit approval** —
-do not edit files until the user approves (unless they said "auto" / "just fix it").
+After PLAN, **present the Before/After suggestion for each issue**, then **STOP and ask via a popup**.
+This is a hard gate — exactly like SELECT, it must use the `AskUserQuestion` tool. **No file may be
+edited until that popup returns.** Do not infer approval from the original prompt; the only way past
+this gate is the user's answer in *this* popup.
 
-- Show, per issue: `id · title`, the **Before** block (real code read from `FERoot`/`BERoot`,
-  verbatim with `file:line`) and the proposed **After** block (`// ← FIXED`).
-- Group by codebase (Backend first, then Frontend). Keep it skimmable — diff-style.
-- Let the user approve all, approve a subset, or request changes. Only approved issues get
-  implemented; re-show after edits.
+1. Show, per issue: `id · title`, the **Before** block (real code read from `FERoot`/`BERoot`,
+   verbatim with `file:line`) and the proposed **After** block (`// ← FIXED`).
+   Group by codebase (Backend first, then Frontend). Keep it skimmable — diff-style.
+
+2. Then call `AskUserQuestion` with these options:
+   - **Auto-fix all** — implement every suggested fix now, no further prompts.
+   - **Review / approve subset** — user names which issue ids to apply; only those get implemented.
+   - **Just write the plan** — stop here, edit nothing; the 3-pillar plan files are the deliverable.
+   - **Request changes** — user gives feedback; revise the Before/After and re-show, then re-ask.
+
+3. Only after the popup returns do you proceed to IMPLEMENT, and only for the approved scope.
+   Re-show / re-ask after edits if the user picked "Review / approve subset".
 
 ## parse rules
 
