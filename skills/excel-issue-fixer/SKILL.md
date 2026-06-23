@@ -129,10 +129,19 @@ Pillar 3  Backend plan  → UAT-<BEStack>-Plan-<Module>.md  Before/After per BE 
 
 - Split by **coverage, not doc-type**: one all-tasks file + one plan per stack.
 - A **fullstack** issue → once in All-Tasks, and in **both** plans (each shows only its layer's half).
+- **Pillar 1 is the sheet-Status board — not a free-form triage.** Drive every status from the Excel
+  **Status column (col H)**; apply the done-bucket rule (`Retest UAT` ≡ `Fixed` ≡ `Close` = done);
+  group per-issue sections by **layer** (Frontend / Backend / Fullstack). Pillar 1 MUST contain, in
+  order: header line with the Status-column breakdown + which export `(NN)`, a **Sync log**, a
+  **Summary** (status table + layer table), a **Tasks Left** section grouped by owner, a **Triage**
+  table, then the per-layer per-issue sections. **Never** restructure Pillar 1 around an invented
+  P1/P2/REPRO/BIZ priority — risk/priority phasing belongs only in the plans (Pillars 2 & 3).
 - **Before/After contract:** the Before block is the **real code read from `FERoot`/`BERoot`** (verbatim,
-  `Grep`/`Read` it first); After is the minimal edit with `// ← FIXED` / `// ← BUG:` markers; cite `file:line`;
-  mark `*(approximate)*` only when the exact line can't be found — never silently guess.
+  `Grep`/`Read` it first); After is the minimal edit with `// ← FIXED` / `// ← BUG:` markers; cite `file:line`
+  as a clickable link; mark `*(approximate)*` only when the exact line can't be found — never silently guess.
 - Each plan issue carries 3 checkboxes: Fix implemented · Unit/integration test written · UAT retest passed.
+- **Re-runs accumulate, never reset:** if a `<Module>-All-Tasks.md` already exists, update it in place —
+  append a new Sync-log delta and flip changed statuses/counts. Do not regenerate it from scratch.
 
 Then use TodoWrite. One todo per issue.
 
