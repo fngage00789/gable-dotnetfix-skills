@@ -42,6 +42,8 @@
   .grid{display:grid;gap:30px;margin-top:48px}
   .g2{grid-template-columns:1fr 1fr}
   .g3{grid-template-columns:repeat(3,1fr)}
+  .credits{display:flex;flex-wrap:wrap;justify-content:center;gap:30px;margin-top:48px}
+  .credits .card{flex:1 1 28%;min-width:380px;text-align:center}
   .card{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
     border:2px solid var(--line);border-radius:22px;padding:40px}
   .card .ct{font-family:var(--mono);font-size:18px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
@@ -205,16 +207,19 @@
 <section class="page" data-document-role="page" data-label="Demo Session">
   <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
   <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>11</b> / 13</span>
-  <p class="eyebrow">05 <span class="sep">/</span> Demo session</p>
-  <h2>One run, <span class="grad">end to end</span>.</h2>
+  <p class="eyebrow">05 <span class="sep">/</span> Demo session — real run</p>
+  <h2>One sheet, <span class="grad">a planned fix set</span>.</h2>
   <div class="term"><div class="bar"><i></i><i></i><i></i></div><div class="body">
-<div class="l"><span class="pr">›</span> /excel-issue-fixer <span class="mg">@UAT-Issues.xlsx</span></div>
-<div class="l"><span class="cm">→ SELECT  FE = budgetapplication-frontend · BE = budgetapplication-backend</span></div>
-<div class="l"><span class="cm">→ PARSE   12 issues · CLASSIFY 7 backend · 4 frontend · 1 fullstack</span></div>
-<div class="l"><span class="cm">→ SUGGEST reviewed Before/After per issue → </span><span class="ok">approved</span></div>
-<div class="l"><span class="cm">→ IMPLEMENT backend → frontend → tests</span></div>
-<div class="l"><span class="ok">✓ all tests green</span> <span class="cm">· 3-pillar board synced — Fixed (date · commit)</span></div>
+<div class="l"><span class="pr">›</span> /excel-issue-fixer <span class="mg">@"…OPEX Maintenance Project (2).xlsx"</span></div>
+<div class="l"><span class="cm">→ SELECT   FE = budgetapplication-frontend · BE = budgetapplication-backend</span></div>
+<div class="l"><span class="cm">→ DETECT   Angular 18 · PrimeNG 17.18 · Tailwind 3.4 · TS 5.4 · .NET 8</span></div>
+<div class="l"><span class="cm">→ PARSE    108 issues · CLASSIFY (open) </span>51 FE · 10 BE · 7 fullstack</div>
+<div class="l"><span class="cm">→ SUGGEST  popup → </span><span class="ok">"Just write the plan"</span><span class="cm"> · no code edited</span></div>
+<div class="l"><span class="ok">✓ 3-pillar plan</span> <span class="mg">→</span> <span class="cm">C:\Work\BMS\uat-fix-plans\</span></div>
+<div class="l"><span class="cm">  · OPEX-Maintenance-All-Tasks.md (36 done / 15 not-done)</span></div>
+<div class="l"><span class="cm">  · UAT-Angular-Plan-…md · UAT-Dotnet-Plan-…md</span></div>
   </div></div>
+  <p class="sub">Stopped at the SUGGEST gate — the deliverable is the 3-pillar plan. Re-run to implement any subset; plans accumulate, never reset.</p>
 </section>
 
 <section class="page" data-document-role="page" data-label="Get Started">
@@ -236,11 +241,12 @@
   <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>13</b> / 13</span>
   <p class="eyebrow">07 <span class="sep">/</span> Credit &amp; Permission</p>
   <h2>Thanks to <span class="grad">the team</span>.</h2>
-  <div class="grid g2">
+  <div class="credits">
     <div class="card"><p class="ct">Credit</p><h3>Kanchai Kornnitikul</h3></div>
     <div class="card"><p class="ct">Credit</p><h3>Suvalak Vijitponkun</h3></div>
     <div class="card"><p class="ct">Credit</p><h3>Jetsada Chanthaphoon</h3></div>
     <div class="card"><p class="ct">Credit</p><h3>Waroon Larpsrisawad</h3></div>
+    <div class="card"><p class="ct">Credit</p><h3>Siriporn Charoenchaipet</h3></div>
   </div>
 </section>
 
