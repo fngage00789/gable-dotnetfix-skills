@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Excel Issue Fixer — Skill Flow</title>
+<style>
+  :root{
+    --ground:#080B12;--panel:#0E1320;--text:#E6ECF5;--muted:#8A97B0;--line:#1E2740;
+    --accent:#2DE2C5;--accent-2:#C051E8;
+    --grad:linear-gradient(100deg,#2DE2C5,#C051E8);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#03050a;font-family:var(--sans);color:var(--text)}
+  .page{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--ground);
+    display:flex;flex-direction:column;justify-content:center;padding:150px 168px;margin:0 auto 28px}
+  .page::before{content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(120% 90% at 12% 0%,rgba(45,226,197,.12),transparent 55%),
+      radial-gradient(120% 90% at 100% 100%,rgba(192,81,232,.14),transparent 55%),
+      linear-gradient(transparent 95%,rgba(255,255,255,.03) 95%) 0 0/100% 60px,
+      linear-gradient(90deg,transparent 95%,rgba(255,255,255,.03) 95%) 0 0/60px 100%;}
+  .page>*{position:relative;z-index:2}
+  /* HUD frame */
+  .brk{position:absolute;width:46px;height:46px;border:3px solid var(--accent);z-index:3}
+  .tl{top:40px;left:40px;border-right:0;border-bottom:0}
+  .tr{top:40px;right:40px;border-left:0;border-bottom:0;border-color:var(--accent-2)}
+  .bl{bottom:40px;left:40px;border-right:0;border-top:0;border-color:var(--accent-2)}
+  .br{bottom:40px;right:40px;border-left:0;border-top:0}
+  .tag{position:absolute;top:48px;left:104px;font-family:var(--mono);font-size:18px;letter-spacing:.32em;color:var(--muted);text-transform:uppercase;z-index:3}
+  .counter{position:absolute;bottom:46px;right:104px;font-family:var(--mono);font-size:20px;letter-spacing:.2em;color:var(--muted);z-index:3}
+  .counter b{color:var(--accent)}
+
+  .eyebrow{font-family:var(--mono);font-size:21px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+  .eyebrow .sep{color:var(--muted);margin:0 .55em}
+  h1{font-size:150px;line-height:.96;font-weight:800;letter-spacing:-.02em}
+  h2{font-size:84px;line-height:1.02;font-weight:800;letter-spacing:-.015em;margin-bottom:8px}
+  .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:32px;line-height:1.5;max-width:62ch;margin-top:28px}
+
+  .grid{display:grid;gap:30px;margin-top:48px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border:2px solid var(--line);border-radius:22px;padding:40px}
+  .card .ct{font-family:var(--mono);font-size:18px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+  .card h3{font-size:34px;font-weight:700;margin-bottom:14px}
+  .card p{color:var(--muted);font-size:25px;line-height:1.45}
+
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px}
+  .chip{position:relative;border:2px solid var(--line);border-radius:18px;padding:30px;background:rgba(255,255,255,.025)}
+  .chip .n{font-family:var(--mono);font-size:20px;color:var(--muted)}
+  .chip .name{font-weight:700;font-size:30px;margin-top:8px}
+  .chip.gate{border:2px solid var(--accent)}
+  .chip.gate .name{color:var(--accent)}
+  .chip .badge{position:absolute;top:18px;right:18px;font-family:var(--mono);font-size:14px;letter-spacing:.12em;
+    color:var(--ground);background:var(--accent);border-radius:30px;padding:3px 12px;text-transform:uppercase}
+  .legend{margin-top:34px;font-family:var(--mono);font-size:22px;color:var(--muted)}
+  .legend .dot{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--accent);margin-right:12px;vertical-align:middle}
+
+  .term{margin-top:48px;background:#05070d;border:2px solid var(--line);border-radius:22px;
+    font-family:var(--mono);font-size:28px;line-height:1.75;overflow:hidden;max-width:1400px}
+  .term .bar{display:flex;gap:12px;padding:20px 26px;border-bottom:2px solid var(--line);background:rgba(255,255,255,.02)}
+  .term .bar i{width:18px;height:18px;border-radius:50%;background:#2a3450;display:block}
+  .term .bar i:first-child{background:#ff5f57}.term .bar i:nth-child(2){background:#febc2e}.term .bar i:nth-child(3){background:#28c840}
+  .term .body{padding:30px 34px;color:#cdd6ea}
+  .term .l{white-space:pre-wrap;margin-bottom:6px}
+  .pr{color:var(--accent)}.cm{color:var(--muted)}.ok{color:var(--accent)}.mg{color:var(--accent-2)}
+
+  .cover h1{font-size:200px}
+  .presented{margin-top:56px}
+  .presented .pill{display:inline-block;background:var(--grad);color:var(--ground);font-weight:700;
+    border-radius:40px;padding:16px 34px;font-family:var(--mono);font-size:28px}
+  .repo{font-family:var(--mono);font-size:32px;color:var(--accent);margin-top:8px;word-break:break-all}
+</style>
+</head>
+<body>
+
+<section class="page cover" data-document-role="page" data-label="Cover">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>01</b> / 12</span>
+  <p class="eyebrow">Claude Code Skill <span class="sep">//</span> .NET + Angular</p>
+  <h1>Excel Issue <span class="grad">Fixer</span></h1>
+  <p class="sub">Turn an Excel UAT / issue sheet into a planned, tested fix — classify every issue, propose Before/After edits, then implement with tests.</p>
+  <div class="presented"><span class="pill">Presented by Krirerk Chootiang</span></div>
+</section>
+
+<section class="page" data-document-role="page" data-label="What It Does">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>02</b> / 12</span>
+  <p class="eyebrow">01 <span class="sep">/</span> What it does</p>
+  <h2>Sheet in, <span class="grad">shipped fixes</span> out.</h2>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Input</p><h3>An .xlsx + your repos</h3><p>An issue / UAT sheet plus your frontend and backend projects.</p></div>
+    <div class="card"><p class="ct">Output</p><h3>3-pillar plan + code</h3><p>All-Tasks board, Frontend plan, Backend plan — and the implemented fixes.</p></div>
+    <div class="card"><p class="ct">Guarantee</p><h3>Approval before edits</h3><p>Every fix is shown as Before/After and gated on your sign-off.</p></div>
+    <div class="card"><p class="ct">Quality</p><h3>Tests every fix</h3><p>Tests follow each change; status stays synced across all three docs.</p></div>
+  </div>
+</section>
+
+<section class="page" data-document-role="page" data-label="How To Invoke">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>03</b> / 12</span>
+  <p class="eyebrow">02 <span class="sep">/</span> How to invoke</p>
+  <h2>One command.</h2>
+  <div class="term"><div class="bar"><i></i><i></i><i></i></div><div class="body">
+<div class="l"><span class="pr">›</span> /excel-issue-fixer <span class="mg">@path-to-file.xlsx</span></div>
+<div class="l"><span class="cm"># @file is the issue sheet — if omitted, the skill asks for a path</span></div>
+<div class="l"><span class="cm"># triggers: "read excel" · "fix issues from excel" · ".xlsx"</span></div>
+<div class="l"><span class="ok">✓</span> auto-loads in any project where the skill is installed</div>
+  </div></div>
+</section>
+
+<section class="page" data-document-role="page" data-label="The Flow">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>04</b> / 12</span>
+  <p class="eyebrow">03 <span class="sep">/</span> The flow at a glance</p>
+  <h2>Eight steps, <span class="grad">two checkpoints</span>.</h2>
+  <div class="flow">
+    <div class="chip"><div class="n">01</div><div class="name">PARSE</div></div>
+    <div class="chip gate"><span class="badge">you</span><div class="n">02</div><div class="name">SELECT</div></div>
+    <div class="chip"><div class="n">03</div><div class="name">CLASSIFY</div></div>
+    <div class="chip"><div class="n">04</div><div class="name">DETECT</div></div>
+    <div class="chip"><div class="n">05</div><div class="name">PLAN</div></div>
+    <div class="chip gate"><span class="badge">you</span><div class="n">06</div><div class="name">SUGGEST</div></div>
+    <div class="chip"><div class="n">07</div><div class="name">IMPLEMENT</div></div>
+    <div class="chip"><div class="n">08</div><div class="name">VERIFY</div></div>
+  </div>
+  <p class="legend"><span class="dot"></span>Human checkpoints — pick projects (SELECT) and approve fixes (SUGGEST). Backend first, then frontend, then tests.</p>
+</section>
+
+<section class="page" data-document-role="page" data-label="Parse & Select">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>05</b> / 12</span>
+  <p class="eyebrow">Steps 01–02 <span class="sep">/</span> Parse &amp; Select</p>
+  <h2>Read the sheet, <span class="grad">choose the codebases</span>.</h2>
+  <div class="grid g2">
+    <div class="card"><p class="ct">01 · Parse</p><h3>Extract every row</h3><p>Reads the Excel and pulls each issue — id, title, description, priority.</p></div>
+    <div class="card"><p class="ct">02 · Select</p><h3>Pick Frontend &amp; Backend</h3><p>A popup lists auto-discovered candidates: angular.json for FE, .sln/.csproj for BE. Picks become FERoot / BERoot; "None" skips that side.</p></div>
+  </div>
+</section>
+
+<section class="page" data-document-role="page" data-label="Classify & Detect">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>06</b> / 12</span>
+  <p class="eyebrow">Steps 03–04 <span class="sep">/</span> Classify &amp; Detect</p>
+  <h2>Sort issues, <span class="grad">read the stack</span>.</h2>
+  <div class="grid g2">
+    <div class="card"><p class="ct">03 · Classify</p><h3>Backend · Frontend · Fullstack</h3><p>Each issue tagged by signal words — .NET API terms vs Angular UI terms.</p></div>
+    <div class="card"><p class="ct">04 · Detect</p><h3>Framework &amp; versions</h3><p>Auto-detect inside FERoot/BERoot — never hardcoded. Probes package.json, angular.json, .csproj, global.json.</p></div>
+  </div>
+</section>
+
+<section class="page" data-document-role="page" data-label="Plan — 3 Pillars">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>07</b> / 12</span>
+  <p class="eyebrow">Step 05 <span class="sep">/</span> Plan</p>
+  <h2>Three linked <span class="grad">pillars</span>, before any code.</h2>
+  <div class="grid g3">
+    <div class="card"><p class="ct">Pillar 1</p><h3>All-Tasks board</h3><p>Every issue with triage + status, grouped by layer.</p></div>
+    <div class="card"><p class="ct">Pillar 2</p><h3>Frontend plan</h3><p>Before/After per FE issue, phased by risk.</p></div>
+    <div class="card"><p class="ct">Pillar 3</p><h3>Backend plan</h3><p>Before/After per BE issue, phased.</p></div>
+  </div>
+  <p class="sub">A fullstack issue appears once in All-Tasks and in both plans — each showing only its layer's half.</p>
+</section>
+
+<section class="page" data-document-role="page" data-label="Suggest — Approval Gate">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>08</b> / 12</span>
+  <p class="eyebrow">Step 06 <span class="sep">/</span> Suggest — approval gate</p>
+  <h2>Show the fix. <span class="grad">Wait for sign-off.</span></h2>
+  <div class="grid g3">
+    <div class="card"><p class="ct">Present</p><h3>Before / After</h3><p>Per issue, grouped backend-first then frontend.</p></div>
+    <div class="card"><p class="ct">Before</p><h3>Real code</h3><p>Read verbatim from FERoot/BERoot with file:line citations.</p></div>
+    <div class="card"><p class="ct">After</p><h3>Minimal edit</h3><p>Marked with FIXED / BUG comments — nothing more.</p></div>
+  </div>
+  <p class="sub">No files are edited until you approve all, approve a subset, or request changes.</p>
+</section>
+
+<section class="page" data-document-role="page" data-label="Implement & Verify">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>09</b> / 12</span>
+  <p class="eyebrow">Steps 07–08 <span class="sep">/</span> Implement &amp; Verify</p>
+  <h2>Execute, <span class="grad">then confirm</span>.</h2>
+  <div class="grid g3">
+    <div class="card"><p class="ct">07 · Implement</p><h3>Backend → Frontend → Tests</h3><p>Approved fixes applied in that order for a stable contract.</p></div>
+    <div class="card"><p class="ct">Test</p><h3>Every fix covered</h3><p>xUnit / integration for backend, ng test for frontend.</p></div>
+    <div class="card"><p class="ct">08 · Verify</p><h3>Green + synced</h3><p>Run tests, confirm no regression, sync all 3 pillars with a Fixed (date · commit) note.</p></div>
+  </div>
+</section>
+
+<section class="page" data-document-role="page" data-label="Composed Skills">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>10</b> / 12</span>
+  <p class="eyebrow">04 <span class="sep">/</span> Composed skills</p>
+  <h2>Built from <span class="grad">other skills</span>.</h2>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Backend</p><h3>dotnet-developer</h3><p>Implements the .NET half — this repo.</p></div>
+    <div class="card"><p class="ct">Frontend</p><h3>angular-developer</h3><p>Implements the Angular half — external angular/skills repo.</p></div>
+  </div>
+  <p class="sub">Install both companions before running excel-issue-fixer. Backend-first ordering keeps API contracts stable before UI work.</p>
+</section>
+
+<section class="page" data-document-role="page" data-label="Demo Session">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>11</b> / 12</span>
+  <p class="eyebrow">05 <span class="sep">/</span> Demo session</p>
+  <h2>One run, <span class="grad">end to end</span>.</h2>
+  <div class="term"><div class="bar"><i></i><i></i><i></i></div><div class="body">
+<div class="l"><span class="pr">›</span> /excel-issue-fixer <span class="mg">@UAT-Issues.xlsx</span></div>
+<div class="l"><span class="cm">→ SELECT  FE = budgetapplication-frontend · BE = budgetapplication-backend</span></div>
+<div class="l"><span class="cm">→ PARSE   12 issues · CLASSIFY 7 backend · 4 frontend · 1 fullstack</span></div>
+<div class="l"><span class="cm">→ SUGGEST reviewed Before/After per issue → </span><span class="ok">approved</span></div>
+<div class="l"><span class="cm">→ IMPLEMENT backend → frontend → tests</span></div>
+<div class="l"><span class="ok">✓ all tests green</span> <span class="cm">· 3-pillar board synced — Fixed (date · commit)</span></div>
+  </div></div>
+</section>
+
+<section class="page" data-document-role="page" data-label="Get Started">
+  <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+  <span class="tag">gable-dotnetfix-skills</span><span class="counter"><b>12</b> / 12</span>
+  <p class="eyebrow">06 <span class="sep">/</span> Get started</p>
+  <h2>Try it <span class="grad">now</span>.</h2>
+  <p class="repo">github.com/fngage00789/gable-dotnetfix-skills</p>
+  <div class="term"><div class="bar"><i></i><i></i><i></i></div><div class="body">
+<div class="l"><span class="cm"># install the skill</span></div>
+<div class="l"><span class="pr">$</span> npx skills add fngage00789/gable-dotnetfix-skills <span class="mg">--skill</span> excel-issue-fixer</div>
+<div class="l"><span class="cm"># plus its companions: dotnet-developer + angular-developer</span></div>
+<div class="l"><span class="pr">›</span> /excel-issue-fixer <span class="mg">@issues.xlsx</span> <span class="cm"># → follow the two checkpoints</span></div>
+  </div></div>
+</section>
+
+</body>
+</html>
